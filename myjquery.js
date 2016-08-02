@@ -1,19 +1,10 @@
-function jquery(selector,context){
+function jquery(selector){
     if(typeof selector=="string"){
-        var context=context||[document];
-        var reg=/[\.#]?[a-z][a-z1-6_-]{0,10}\b/g;
-        var selectorArr=selector.match(reg);
-        for(var i=0;i<selectorArr.length;i++){
-            var context=this.getEle(selectorArr[i],context);
+        var objs=document.getElementsByTagName(selector);
+        for(var i=0;i<objs.length;i++){
+            this[i]=objs[i];
         }
-        for(var i=0;i<context.length;i++){
-            this[i]=context[i]
-        }
-        this.length=context.length;
-
-    }else  if(typeof selector=="object"){
-        this[0]=selector;
-        this.length=1;
+        this.length=objs.length;
     }
 }
 jquery.prototype={
@@ -25,7 +16,7 @@ jquery.prototype={
     click:function(callback){
         this.each(function(index,obj){
             obj.onclick=function(){
-                callback.call(obj);
+                callback();
             }
         })
 
@@ -72,50 +63,11 @@ jquery.prototype={
         })
 
         return this;
-    },
-
-    getEle:function(selector,context){
-        var arr=[];
-        if(typeof selector=="string"){
-            if(selector.charAt(0)=="."){
-                for(var i=0;i<context.length;i++){
-                    var objs=context[i].getElementsByClassName(selector.substr(1));
-                    for(var j=0;j<objs.length;j++){
-                        arr.push(objs[j]);
-                    }
-                }
-            }else if(/^[a-z][a-z1-6]{0,10}$/.test(selector)){
-                for(var i=0;i<context.length;i++){
-                    var objs=context[i].getElementsByTagName(selector);
-                    for(var j=0;j<objs.length;j++){
-                        arr.push(objs[j]);
-                    }
-                }
-            }else if(selector.charAt(0)=="#"){
-                objs=[document.getElementById(selector.substr(1))];
-            }
-        }
-        return arr;
-    },
-
-
-    eq:function(num){
-      this[0]=this[num];
-      this.length=1;
-      return this;
-    },
-    index:function(ele){
-       for(var i=0;i<this.length;i++){
-           if(this[i]==ele){
-               return i;
-           }
-       }
-
     }
 }
 
-function $(selector,context){
-    return new jquery(selector,context);
+function $(selector){
+    return new jquery(selector);
 }
 
 
